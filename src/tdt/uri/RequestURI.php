@@ -56,9 +56,9 @@ class RequestURI {
         }
     }
 
-    public static function getInstance(array $config = array()) {
+    public static function getInstance() {
         if (!isset(self::$instance)) {
-            self::$instance = new RequestURI($config);
+            self::$instance = new RequestURI();
         }
         return self::$instance;
     }
