@@ -16,8 +16,8 @@ class RequestURI {
     private static $instance;
     private $protocol, $host, $port, $filters, $format, $GETParameters;
 
-    private function __construct() {
-
+    public function __construct() {
+        
         $this->protocol = 'http';
         if (!empty($_SERVER['HTTPS'])) {
             if ($_SERVER['HTTPS'] == 'on') {
@@ -27,13 +27,12 @@ class RequestURI {
         $this->host = $_SERVER['SERVER_NAME'] . "/";
         $this->port = $_SERVER["SERVER_PORT"];
 
-        $requestURI = $_SERVER["REQUEST_URI"];
-
+        $requestURI = $_SERVER["REQUEST_URI"];        
         //Now for the hard part: parse the REQUEST_URI
         //This can look like this: /package/resource/identi/fiers.json
-
-        $path = explode("/", $requestURI);
-
+        
+        $path = explode("/", ltrim($requestURI,'/'));
+        
         $i = 0;
         //shift the path chunks as long as they exist and add them to the right variable
         while (sizeof($path) > 0) {
@@ -56,7 +55,7 @@ class RequestURI {
         }
     }
 
-    public static function getInstance() {
+    public static function getInstance() {        
         if (!isset(self::$instance)) {
             self::$instance = new RequestURI();
         }
@@ -97,6 +96,7 @@ class RequestURI {
     }
 
     public function getResourcePath() {
+        $URI = "";
         if (isset($this->filters) && !is_null($this->filters)) {
             $URI .= "/";
             $URI .= implode("/", $this->filters);
@@ -110,9 +110,8 @@ class RequestURI {
     }
 
     public function getURI() {
-        $URI = $this->protocol . "://" . $this->host . $this->getSubDir();
+        $URI = $this->protocol . "://" . $this->host;
         if (isset($this->filters) && !is_null($this->filters)) {
-            $URI .= "/";
             $URI .= implode("/", $this->filters);
         }
         if ($this->format != "") {
